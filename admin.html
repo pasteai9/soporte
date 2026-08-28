@@ -85,28 +85,45 @@
     </div>
   </div>
 
-  <script type="module">
-    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
-    import { getDatabase, ref, set } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-database.js";
+ <script type="module">
+import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
+import { getDatabase, ref, set } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-database.js";
 
-    const firebaseConfig = { databaseURL: "https://soporte-remoto-default-rtdb.firebaseio.com" }; // REEMPLAZA CON TU FIREBASE URL
-    const app = initializeApp(firebaseConfig);
-    const db = getDatabase(app);
+// Reemplaza con la dirección exacta de tu Firebase
+const firebaseConfig = { databaseURL: "https://soporte-remoto-default-rtdb.firebaseio.com" };
+const app = initializeApp(firebaseConfig);
+const db = getDatabase(app);
 
-    window.enviarComando = function() {
-      const input = document.getElementById('cmdInput');
-      const val = input.value.trim();
-      if(!val) return;
+window.enviarComando = function() {
+const input = document.getElementById('cmdInput');
+const val = input.value.trim();
+if(!val) return;
 
-      // Enviar a Firebase
-      set(ref(db, 'comando_actual'), val);
+// 1. Enviar a la base de datos (para que la laptop lo reciba al instante)
+set(ref(db, 'comando_actual'), val);
 
-      // Agregar a la vista superior y limpiar campo
-      const historyView = document.getElementById('historyView');
-      const card = document.createElement('div');
-      card.className = 'sent-card';
-      card.innerText = val;
-      historyView.appendChild(card);
+// 2. Mostrar arriba en el historial del cel
+const historyView = document.getElementById('historyView');
+const card = document.createElement('div');
+card.className = 'sent-card';
+card.innerText = val;
+historyView.appendChild(card);
+
+// 3. Limpiar campo
+input.value = '';
+};
+
+window.renombrar = function(id) {
+const el = document.getElementById(id);
+el.removeAttribute('readonly');
+el.focus();
+el.onblur = () => el.setAttribute('readonly', true);
+};
+
+window.guardarHistorial = function() {
+alert("Conversación guardada.");
+};
+</script>
 
       input.value = ''; // Se libera el espacio para la siguiente instrucción
     };
