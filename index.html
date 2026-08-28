@@ -1,0 +1,48 @@
+
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Terminal Receptor</title>
+<style>
+body { font-family: monospace; background: #0f172a; color: #f8fafc; padding: 2rem; }
+.card { background: #1e293b; border-radius: 8px; padding: 1.5rem; max-width: 600px; margin: auto; border: 1px solid #334155; }
+#box { background: #020617; color: #38bdf8; padding: 1rem; border-radius: 6px; font-size: 1.1rem; white-space: pre-wrap; word-break: break-all; min-height: 80px; margin-bottom: 1rem; }
+button { background: #0284c7; color: white; border: none; padding: 0.8rem 1.5rem; border-radius: 6px; font-weight: bold; cursor: pointer; width: 100%; font-size: 1rem; }
+button:hover { background: #0369a1; }
+</style>
+</head>
+<body>
+<div class="card">
+<h2>Texto / Comando recibido:</h2>
+<div id="box">Esperando datos...</div>
+<button onclick="copiar()">Copiar al portapapeles</button>
+</div>
+
+<script type="module">
+import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
+import { getDatabase, ref, onValue } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-database.js";
+
+const firebaseConfig = {
+apiKey: "AIzaSyAOEcktDXXSrFSCkHRBP21gfrkFxnl0Kj4",
+authDomain: "commandpaste.firebaseapp.com",
+projectId: "commandpaste",
+databaseURL: "https://commandpaste-default-rtdb.firebaseio.com"
+};
+
+const app = initializeApp(firebaseConfig);
+const db = getDatabase(app);
+
+onValue(ref(db, 'comando_actual'), (snapshot) => {
+document.getElementById('box').innerText = snapshot.val() || "Esperando datos...";
+});
+
+window.copiar = function() {
+const txt = document.getElementById('box').innerText;
+navigator.clipboard.writeText(txt);
+alert("¡Copiado!");
+}
+</script>
+</body>
+</html>
