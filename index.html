@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Panel de Administración</title>
+<title>Terminal Receptor - Soporte</title>
 <style>
 :root {
 --bg-dark: #131314;
@@ -17,31 +17,29 @@
 * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Segoe UI', system-ui, sans-serif; }
 body { background-color: var(--bg-dark); color: var(--text-main); display: flex; height: 100vh; overflow: hidden; }
 
-/* Sidebar para editar comandos y pláticas */
+/* Sidebar Historial */
 .sidebar { width: 260px; background-color: var(--sidebar-bg); border-right: 1px solid #333; display: flex; flex-direction: column; padding: 15px; }
-.sidebar h3 { font-size: 0.85rem; text-transform: uppercase; color: var(--text-muted); margin-bottom: 12px; }
+.sidebar h3 { font-size: 0.85rem; text-transform: uppercase; color: var(--text-muted); margin-bottom: 15px; letter-spacing: 1px; }
 .chat-list { flex: 1; overflow-y: auto; display: flex; flex-direction: column; gap: 8px; }
-.chat-item { padding: 10px; background: #2a2b2e; border-radius: 8px; display: flex; justify-content: space-between; align-items: center; font-size: 0.9rem; }
-.chat-item input { background: transparent; border: none; color: white; width: 80%; font-size: 0.9rem; outline: none; }
-.edit-icon { cursor: pointer; opacity: 0.6; font-size: 0.8rem; }
+.chat-item { padding: 10px 12px; background: #2a2b2e; border-radius: 8px; cursor: pointer; display: flex; justify-content: space-between; align-items: center; font-size: 0.9rem; }
+.chat-item.active { background-color: #37393e; color: var(--accent-blue); border-left: 3px solid var(--accent-blue); }
 
-/* Panel Principal Gemini-Style */
-.main-panel { flex: 1; display: flex; flex-direction: column; height: 100vh; }
-header { height: 60px; border-bottom: 1px solid #333; display: flex; justify-content: space-between; align-items: center; padding: 0 20px; }
+/* Contenido Principal */
+.main-content { flex: 1; display: flex; flex-direction: column; height: 100vh; }
+header { height: 60px; border-bottom: 1px solid #333; display: flex; justify-content: space-between; align-items: center; padding: 0 25px; }
+header h2 { font-weight: 500; font-size: 1.1rem; }
 
 .save-btn { background-color: var(--accent-green); color: white; border: none; padding: 8px 14px; border-radius: 8px; cursor: pointer; display: flex; align-items: center; gap: 8px; font-weight: 600; }
+.save-btn:hover { opacity: 0.9; }
 .save-btn svg { width: 18px; height: 18px; fill: white; }
 
-/* Historial superior y input inferior */
-.history-view { flex: 1; padding: 20px; overflow-y: auto; display: flex; flex-direction: column; gap: 12px; }
-.sent-card { background: var(--card-bg); padding: 15px; border-radius: 12px; border-left: 4px solid var(--accent-blue); font-family: monospace; word-break: break-all; }
-
-.input-container { padding: 15px; background: var(--sidebar-bg); border-top: 1px solid #333; display: flex; flex-direction: column; gap: 10px; }
-textarea { width: 100%; height: 75px; background: #131314; border: 1px solid #444; border-radius: 10px; color: white; padding: 12px; font-size: 1rem; resize: none; outline: none; }
-textarea:focus { border-color: var(--accent-blue); }
-
-.action-btn { background: var(--accent-green); color: white; border: none; padding: 12px; border-radius: 8px; font-weight: bold; font-size: 1rem; cursor: pointer; transition: 0.2s; }
-.action-btn:hover { opacity: 0.9; }
+/* Display Receptor */
+.display-area { flex: 1; padding: 30px; overflow-y: auto; display: flex; flex-direction: column; justify-content: center; align-items: center; }
+.card { background: var(--card-bg); border-radius: 16px; border: 1px solid #3c4043; width: 100%; max-width: 800px; padding: 25px; box-shadow: 0 8px 24px rgba(0,0,0,0.3); }
+.card-title { color: var(--accent-blue); font-size: 0.85rem; font-weight: 600; text-transform: uppercase; margin-bottom: 12px; }
+.content-box { font-family: 'Consolas', monospace; font-size: 1.2rem; background: #18191b; padding: 20px; border-radius: 10px; border: 1px solid #333; white-space: pre-wrap; word-break: break-all; color: #75b5fe; min-height: 120px; }
+.copy-btn { margin-top: 15px; width: 100%; padding: 12px; background: var(--accent-blue); color: #040c17; border: none; border-radius: 8px; font-weight: bold; cursor: pointer; transition: 0.2s; }
+.copy-btn:hover { background: #c2e7ff; }
 
 @media (max-width: 600px) {
 .sidebar { display: none; }
@@ -55,31 +53,27 @@ textarea:focus { border-color: var(--accent-blue); }
 <body>
 
 <div class="sidebar">
-<h3>Comandos / Listas</h3>
+<h3>Historiales</h3>
 <div class="chat-list">
-<div class="chat-item">
-<input type="text" value="Sesión Activa" id="p1" readonly>
-<span class="edit-icon" onclick="renombrar('p1')">✏️</span>
-</div>
+<div class="chat-item active"><span>Comando Actual</span></div>
 </div>
 </div>
 
-<div class="main-panel">
+<div class="main-content">
 <header>
-<h3>Panel Admin</h3>
-<button class="save-btn" onclick="alert('Historial guardado localmente')">
+<h2>Terminal Receptor</h2>
+<button class="save-btn" onclick="alert('Guardado localmente')">
 <svg viewBox="0 0 24 24"><path d="M17 3H5c-1.11 0-2 .9-2 2v14c0 1.1.89 2 2 2h14c1.1 0 2-.9 2-2V7l-4-4zm-5 16c-1.66 0-3-1.34-3-3s1.34-3 3-3 3 1.34 3 3-1.34 3-3 3zm3-10H5V5h10v4z"/></svg>
 Guardar
 </button>
 </header>
 
-<div class="history-view" id="historyView">
-<div class="sent-card">Comandos enviados recientemente:</div>
+<div class="display-area">
+<div class="card">
+<div class="card-title">Texto / Comando recibido en tiempo real</div>
+<div class="content-box" id="receptorText">Esperando datos...</div>
+<button class="copy-btn" onclick="copiarAlPortapapeles()">Copiar al portapapeles</button>
 </div>
-
-<div class="input-container">
-<textarea id="cmdInput" placeholder="Escribe tu comando o texto aquí..."></textarea>
-<button class="action-btn" onclick="enviarComando()">Enviar Texto</button>
 </div>
 </div>
 
@@ -92,30 +86,15 @@ databaseURL: "https://commandpaste-default-rtdb.firebaseio.com"
 firebase.initializeApp(firebaseConfig);
 const db = firebase.database();
 
-function enviarComando() {
-const input = document.getElementById('cmdInput');
-const val = input.value.trim();
-if(!val) return;
+// Escuchar cambios en la base de datos
+db.ref('comando_actual').on('value', (snapshot) => {
+document.getElementById('receptorText').innerText = snapshot.val() || "Esperando datos...";
+});
 
-// Enviar a la base de datos
-db.ref('comando_actual').set(val);
-
-// Agregar a la lista del celular
-const historyView = document.getElementById('historyView');
-const card = document.createElement('div');
-card.className = 'sent-card';
-card.innerText = val;
-historyView.appendChild(card);
-
-// Limpiar texto
-input.value = '';
-}
-
-function renombrar(id) {
-const el = document.getElementById(id);
-el.removeAttribute('readonly');
-el.focus();
-el.onblur = () => el.setAttribute('readonly', true);
+function copiarAlPortapapeles() {
+const txt = document.getElementById('receptorText').innerText;
+navigator.clipboard.writeText(txt);
+alert("¡Texto copiado al portapapeles!");
 }
 </script>
 </body>
